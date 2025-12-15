@@ -1,0 +1,1 @@
+{"device_id": "WIND_ZP_012", "power_output_kw": 2689.9, "efficiency_pct": 28.9, "temperature_c": 28.7, "voltage_v": 691.0, "current_a": 526.6, "status": "maintenance", "location": {"lat": 47.0311, "lon": 34.2422}, "maintenance_hours": 1967, "wind_speed_ms": 13.6, "rotor_rpm": 20.5, "blade_angle": "feathered"}
