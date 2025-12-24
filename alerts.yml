@@ -1,0 +1,34 @@
+groups:
+  - name: wind_farm_optimization
+    rules:
+      # 1. Відхилення від Power Curve > 15%
+      # (Теоретична - Реальна) / Теоретична > 0.15
+      # Додаємо умову wind_theoretical_power_mw > 0.1, щоб не ділити на нуль
+      - alert: LowTurbineEfficiency
+        expr: (wind_theoretical_power_mw - wind_turbine_power_mw) / wind_theoretical_power_mw > 0.15 and wind_theoretical_power_mw > 0.1
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Turbine {{ $labels.turbine_id }} underperforming"
+          description: "Turbine efficiency is deviation is more than 15% from power curve."
+
+      # 2. Wake Effect занадто сильний (втрати > 50% від номіналу)
+      - alert: HighWakeEffect
+        expr: wind_wake_loss_mw > 1.25
+        for: 30s
+        labels:
+          severity: info
+        annotations:
+          summary: "High Wake Effect on {{ $labels.turbine_id }}"
+          description: "Turbine is losing > 1.25 MW due to wake/positioning."
+
+      # 3. Низький Capacity Factor (якщо загальна потужність парку < 10 МВт при наявності вітру)
+      - alert: LowParkCapacity
+        expr: sum(wind_turbine_power_mw) < 10 and avg(wind_turbine_speed_mps) > 5
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Whole Wind Farm performance is critical"
+          description: "Total power is low despite good wind conditions."
